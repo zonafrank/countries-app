@@ -6,6 +6,7 @@ import "./App.css";
 function App() {
   const [countries, setCountries] = useState([]);
   const [searchString, setSearchString] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
@@ -14,6 +15,7 @@ function App() {
   }, []);
 
   const handleSearch = (event) => {
+    setSelectedCountry(null);
     setSearchString(event.target.value);
   };
 
@@ -21,6 +23,8 @@ function App() {
 
   if (searchString.length === 0) {
     displayList = [];
+  } else if (selectedCountry) {
+    displayList = [selectedCountry];
   } else {
     displayList = countries.filter((c) =>
       c.name.official.toLowerCase().includes(searchString.toLowerCase())
@@ -33,7 +37,12 @@ function App() {
         find country{" "}
         <input type="text" onChange={handleSearch} value={searchString} />
       </div>
-      <Display countryArray={displayList} />
+      <Display
+        countryArray={displayList}
+        selectCountry={setSelectedCountry}
+        selectedCountry={selectedCountry}
+        searchString={searchString}
+      />
     </div>
   );
 }
